@@ -1,3 +1,7 @@
+모바일 슈팅게임 만들기
+
+
+
 ### 플레이어 스크립트
 
 ```c#
@@ -31,6 +35,9 @@ public class Player : MonoBehaviour
     
     public GameObject[] followers;
     public bool isRespawnTime;
+    
+    public bool[] joyControl;
+    public bool isControl;
     
     Animator anim;
     SpriteRenderer spriteRenderer
@@ -79,6 +86,24 @@ public class Player : MonoBehaviour
         Boom();
         Reload();
 	}
+    
+    public void JoyPanel(int type)
+    {
+        for(int index = 0; index < 9; index++)
+        {
+            joyControl[index] = index == type;
+        }
+    }
+    
+    public void JoyDown()
+    {
+        isControl = true;
+    }
+    
+    public void JoyUp;
+    {
+    	isControl = false;   
+    }
     
     void Move()
     {
@@ -1050,4 +1075,83 @@ public class Enemy : MonoBehaviour
 
 Sprite Renderer에서 Sprite : None 으로 하기 (안그러면 스프라이트가 남아서 이상하게 보임)
 
-19분 이후 부터
+
+
+스프라이트 다운로드 받고
+
+UI_Set Import Settings 찾아
+
+
+
+Sprite Mode : Multiple
+
+Pixels Per Unit : 24
+
+Filter Mode : Point (no filter)
+
+Compression : None
+
+
+
+랜더 모드를 Camera로 변경
+
+Canvas - > Render Camera -> Render Camera에 Main Camera 넣기 
+
+Order in Layer : 10
+
+Pixel Perfect 켜주기
+
+
+
+Canvas -> Ui -> Image 이름  Joy Panel로 바꿔주기
+
+화살표가 그려져있는 UI를 Source Image에 넣어주기
+
+Width : 300
+
+Height : 300
+
+
+
+Anchor Presets에서 shift + alt 누른 상태로 좌측 아래 선택
+
+Pos X : 25, Pos Y : 25
+
+이미지의 알파값을 절반정도로 줄여줌. (나중에 비행기가 컨트롤러 이미지 뒤에 가려져서 안보일 수 있음.)
+
+Joy Panel 안에 버튼 하나 생성
+
+이미지 안의 버튼은 이미지와 색상이 보이지 않게 설정
+
+텍스트도 빼주기
+
+Transition : None으로 바꿔주기
+
+Width : 100, Height : 100
+
+왼쪽 위로 앵커 설정해주기 
+
+버튼 9개를 만들고 이름과 배치해주기
+
+EventTrigger 추가하기
+
+* Pointer Down, Pointer Up, Pointer Enter 추가하기
+* 각각 '+' 를 눌러주기
+* Object 라고 적혀있는 곳에 Player 넣어주고 각 버튼에 맞게 버튼 이벤트 넣어주기
+
+
+
+키 맵핑 하기
+
+* Pointer Enter에 0 넣어주기
+
+* Copy Component 눌러주고 나머지 8개 선택 후 Paste Component Value 누르기
+
+* Pointer Enter에서 각 버튼에 맞게 숫자 넣어주기
+
+* | 0    | 1    | 2    |
+  | ---- | ---- | ---- |
+  | 3    | 4    | 5    |
+  | 6    | 7    | 8    |
+
+32분 이후 부터 듣기
