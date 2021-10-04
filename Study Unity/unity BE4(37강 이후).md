@@ -38,6 +38,8 @@ public class Player : MonoBehaviour
     
     public bool[] joyControl;
     public bool isControl;
+    public bool isButtonA;
+    public bool isButtonB;
     
     Animator anim;
     SpriteRenderer spriteRenderer
@@ -107,12 +109,25 @@ public class Player : MonoBehaviour
     
     void Move()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        if((isTouchRight && h == 1) || (isTouchLeft && h == -1))
+        // #. Keyboard Control Value
+        float h = Input.GetAxisRaw("Horizontal"); // 가로
+        float v = Input.GetAxisRaw("Vertical"); // 세로
+        
+        // #. Joy Control Value
+        if(joyControl[0]) { h = -1; v = 1; } // 방향 버튼 변수에 따라 수평, 수직 값 적용
+        if(joyControl[1]) { h = 0; v = 1; }
+        if(joyControl[2]) { h = 1; v = 1; }
+        if(joyControl[3]) { h = -1; v = 0; }
+        if(joyControl[4]) { h = 0; v = 0; }
+        if(joyControl[5]) { h = 1; v = 0; }
+        if(joyControl[6]) { h = -1; v = -1; }
+        if(joyControl[7]) { h = 0; v = -1; }
+        if(joyControl[8]) { h = 1; v = -1; }
+        
+        if((isTouchRight && h == 1) || (isTouchLeft && h == -1) || !isControl)
             h = 0;
         
-        float v = Input.GetAxisRaw("Vertical");
-        if((isTouchTop &&v == 1) || (isTouchBottom && v ==  - 1))
+        if((isTouchTop &&v == 1) || (isTouchBottom && v ==  - 1) || !isControl)
             v = 0;
         
         Vector3 curPos = transform.position;
@@ -127,9 +142,27 @@ public class Player : MonoBehaviour
 		}
     }
     
+    public void ButtonADown()
+    {
+        isButtonA = true;
+    }
+    
+     public void ButtonAUp()
+     {
+        isButtonA = false; 
+     }
+    
+    public void ButtonBDown()
+    {
+        isButtonB = true;
+    }
+    
     void Fire()
     {
-        if(!Input.GetButton("Fire1"))
+         // if(!Input.GetButton("Fire1"))
+         //     return;
+        
+        if(!isButtonA)
             return;
         
         if(curShotDelay < maxShotDelay)
@@ -186,8 +219,11 @@ public class Player : MonoBehaviour
     
     void Boom()
     {
-       if(!Input.GetButton("Fire2"))
-           return;
+       // if(!Input.GetButton("Fire2"))
+       //    return;
+        
+        if(!isButtonB)
+            return;
         
        if(isBoomTime)
        {
@@ -1154,4 +1190,22 @@ EventTrigger 추가하기
   | 3    | 4    | 5    |
   | 6    | 7    | 8    |
 
-32분 이후 부터 듣기
+
+
+Joy Control에서 Size 9로 하기
+
+
+
+발사 버튼 만들기 Set Native Size 눌러 버튼 보기 Width, Height를 200, 200 으로 놓기
+
+앵커를 우측 하단으로 설정하기 Pos X, Pos Y를 -25, 25로 해서 여백주기 알파값을 낮춰 투명하게 만들어주기(170정도, 조이스틱도 170으로 동일)
+
+폭탄버튼도 동일하게 하고 Width, Height 200, 150으로 하고 Pos X, Pos Y -25, 235로 하기
+
+발사, 폭탄 버튼도 방향키와 동일하게 Event Trigger 넣고 (발사 버튼은 2개, 폭탄 버튼은 1개)
+
+Add New Event Type 추가하고 None (Object)에 Player 넣어주기
+
+각자 맞는 함수 넣어주기
+
+42분 이후 부터 보기
