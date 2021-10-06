@@ -782,6 +782,10 @@ using UnityEngine.UI // UI를 사용하기 위해
 using UnityEngine.SceneManagement // 재시작하기 위해
 public class GameManager : MonoBehaviour
 {
+    public int stage;
+    public Animator stageAnim;
+    public Animator clearAnim;
+    
     public string[] enemyObjs;
     public Transform[] spawnPoints;
     
@@ -795,9 +799,73 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverSet;
     public ObjectManager objectManager;
     
+    public List<Spawn> spawnList;
+    public int spawnIndex;
+    public bool spawnEnd;
+    
     void Awake()
     {
+        spawnLIst = new List<Spawn>();
         enemyObjs = new string[] { "EnemyS", "EnemyM", "EnemyL", "EnemyB" };
+        StageStart();
+    }
+    
+    public void StageStart()
+    {
+        // #. Stage UI Load
+        stageAnim.SetTrigger("On");
+        stageAnim.GetComponent<Text>().text = "Stage " + stage = "\nStart";
+        clearAnim.GetComponent<Text>().text = "Stage " + stage = "\nClear!";
+        // #. Enemy Spawn File Read
+        ReadSpawnFile();
+        // #. Fade In
+    }
+    
+    public void StageEnd()
+    {
+        // #. Clear UI Load
+        clearAnim.SetTrigger("On");
+        
+        // #. Stage Increment
+        stage++;
+        
+        // #. Fade Out
+        
+        // #. Player Repos
+	}
+    
+     void ReadSpawnFile()
+    {
+        // #1. 변수 초기화
+        spawnList.Clear();
+        spawnIndex = 0;
+        spawnEnd = false;
+        
+        // #2. 리스폰 파일 읽기
+        TextAsset textFile = Resources.Load("Stage " + stage) as TextAsset;
+        StringReader stringReader = new StringReader(textFile.text);
+        
+         // #3. 한 줄씩 데이터 저장
+        while(stringReader != null)
+        {
+            string line = stringReader.ReadLine();
+            
+            if(line == null)
+                break;
+            
+            // #. 리스폰 데이터 생성
+        Spawn spawnData = new Spawn();
+        spawnData.delay = float.Parse(line.Split(',')[0]);
+        spawnData.type = line.Split(',')[1];
+        spawnData.point = int.Parse(line.Split(',')[2]);
+        spawnList.Add(spawnData);
+        }
+        
+        // #. 텍스트 파일 닫기
+        stringReader.Close();
+        
+        // #. 첫 번째 스폰 딜레이 적용
+       nextSpawnDelay = spawnList[0].delay;
     }
     
     void Update()
@@ -1208,4 +1276,76 @@ Add New Event Type 추가하고 None (Object)에 Player 넣어주기
 
 각자 맞는 함수 넣어주기
 
-42분 이후 부터 보기
+Stage 0 번 복사 하기
+
+Stage 0 삭제
+
+ #### UI Text 생성
+
+Start Text
+
+Width : 700, Height : 300
+
+Font : Bold
+
+Font Size : 130
+
+Clear Text도 똑같이 만들기
+
+#### Text 넣어주기
+
+Animation 파일에서 Animator Controller 만들기 이름 : Text
+
+Animation 만들기 이름 : Text
+
+애니메이터 넣어주기 (두개 다)
+
+애니메이션 넣어주기
+
+Create State -> Empty 만들기 이름 : Idle
+
+Any State -> Text -> Idle 연결해주기
+
+Trigger 넣어주기 이름 : On
+
+Setting 에서 Transition Duration : 0으로 설정 (Any State -> Text, Text -> Idle 부분)
+
+#### 애니메이션 효과
+
+Window에서 Animation -> Animation (ctrl + 6으로도 가능)
+
+아까 만들었던 Text 클릭
+
+Rect Transform -> Scale 뒷부분 지우고 앞부분만 사용
+
+키 프레임 추가
+
+처음 설정은 0으로 0.3초 후에는 1.2
+
+0.1초 후에는 1로 설정
+
+살짝 오버 스케일 프레임을 넣어서 튀는 애니메이션을 연출한다.
+
+5초에 키프레임 추가
+
+다시 0.1 초 동안 다시 1.2
+
+0..3초 뒤 0으로 설정
+
+기본 스케일을 0, 0, 0으로 설정하기
+
+
+
+#### 게임 매니저에 넣어주기
+
+Stage 1로 바꿔주기
+
+Stage Anim, Clear Anim에 Stage Text (Animator), Clear Text (Animator) 넣어주기
+
+
+
+트랜지션의 겹치는 부분이 최대한 없도록 조정한다.
+
+
+
+57분 이후부터 듣기
