@@ -785,6 +785,8 @@ public class GameManager : MonoBehaviour
     public int stage;
     public Animator stageAnim;
     public Animator clearAnim;
+    public Animator fadeAnim;
+    public Animator Transform playerPos;
     
     public string[] enemyObjs;
     public Transform[] spawnPoints;
@@ -819,6 +821,7 @@ public class GameManager : MonoBehaviour
         // #. Enemy Spawn File Read
         ReadSpawnFile();
         // #. Fade In
+        fadeAnim.SetTrigger("In");
     }
     
     public void StageEnd()
@@ -826,12 +829,18 @@ public class GameManager : MonoBehaviour
         // #. Clear UI Load
         clearAnim.SetTrigger("On");
         
-        // #. Stage Increment
-        stage++;
-        
         // #. Fade Out
+        fadeAnim.SetTrigger("Out");
         
         // #. Player Repos
+        player.transform.position = playerPos.position;
+        
+        // #. Stage Increment
+        stage++;
+        if(stage > 2)
+            GameOver();
+        else
+        	Invoke("StageStart()", 5);
 	}
     
      void ReadSpawnFile()
@@ -1150,6 +1159,10 @@ public class Enemy : MonoBehaviour
             gameObject.SetActive(false); // Destory()에서 바꿈
             transform.rotation = Quternion.identity;
             gameManager.CallExplosion(transform.position, enemyName);
+            
+            // #. Boss Kill
+            if(enemyName == "B")
+                gameManager.StageEnd();
 		}
 	}
     void ReturnSprite()
@@ -1349,3 +1362,64 @@ Stage Anim, Clear Anim에 Stage Text (Animator), Clear Text (Animator) 넣어주
 
 
 57분 이후부터 듣기
+
+#### 검은화면 만들기
+
+다운 받은 스프라이트에서 Fade Black을 가져옴
+
+Position X: 0, Y: 0, Z: 0으로 하고
+
+Scale X: 70, Y:100
+
+
+
+페이드 인, 페이드 아웃 애니메이션 생성
+
+Animation 파일-> Create -> Animation
+
+두개 만들고 Fade In, Fade Out
+
+Fade 애니메이터를 Fade Black에다가 넣어준다.
+
+더블클릭
+
+Create State -> Empty
+
+Fade In, Fade Out 가져오기
+
+Any State와 Make Transition으로 Fade In, Fade Out 연결
+
+Trigger 두개 만들고 In, Out
+
+겹치지 않도록 해주기
+
+Fade In
+
+Conditions 설정해주기
+
+Add Property -> Sprite Renderer -> color
+
+color Add keyframe 1초 뒤에 0으로 한다.
+
+
+
+Fade Out
+
+0초일 땐 1, 1초일땐 1로 알파값을설정해준다.
+
+Fade Black을 Fade Anim에다가 넣어준다.
+
+
+
+#### 플레이어 초기 위치
+
+Create Empty 만들고 이름 Player Pos
+
+Position X: 0, Y: -3.5, Z: 0
+
+Player Pos에 넣기
+
+1시간 17분 부터 듣기
+
+
+
