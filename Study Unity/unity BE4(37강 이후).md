@@ -838,9 +838,9 @@ public class GameManager : MonoBehaviour
         // #. Stage Increment
         stage++;
         if(stage > 2)
-            GameOver();
+            Invoke("GameOver", 6);
         else
-        	Invoke("StageStart()", 5);
+        	Invoke("StageStart", 5);
 	}
     
      void ReadSpawnFile()
@@ -1419,7 +1419,30 @@ Position X: 0, Y: -3.5, Z: 0
 
 Player Pos에 넣기
 
-1시간 17분 부터 듣기
+Stage 1.txt 에 내용 넣기
 
 
 
+
+
+## 모바일 빌드
+
+Save Project하고 Build Settings로 들어간다.
+
+안드로이드 클릭 Switch Platform 클릭
+
+플레이어 이미지를 Default Icon에 넣어준다.
+
+Orientation를 Portrait 로 한다.
+
+Package Name : 안드로이드 경로 com.회사이름.어플이름 작성
+
+Scripting Backend 만약 마켓에 등록하려면 ILCPP로 해줘야함
+
+Target Architectures는 ARMv7, ARM64 둘다 체크해줘야함
+
+Build 버튼으로 APK파일만 생성
+
+휴대폰을 연결해서 다운로드
+
+### **끝**
