@@ -24,4 +24,54 @@ Tiling 숫자를 늘려서 텍스쳐를 타일형태로 배치해준다.(X: 10, 
 
 원하는 색깔로 바꿔준다.
 
-7분 부터 듣기
+프리펩(Prefab) : 게임 오브젝트를 에셋으로 보관된 형태
+
+필요한 컴포넌트 :  Collider, Script, Rigidbody
+
+Capsule Collider를 플레이어에 맞게 위치, 크기 조절
+
+
+
+### 플레이어 스크립트
+
+```c#
+public class Player : MonoBehaviour
+{
+    public float speed;
+    float hAxis;
+    float vAxis;
+    
+    Vector3 moveVec;
+    
+    void Start()
+    {
+        
+    }
+    
+    void Update()
+    {
+        hAxis = Input.GetAxisRaw("Horizontal");
+        vAxis = Input.GetAxisRaw("Vertical");
+        
+        moveVec = new Vector3(hAxis, 0, vAxis).normalized;
+        
+        transform.position += moveVec; * speed * Time.deltaTime;
+    }
+}
+```
+
+GetAxisRaw() : Axis 값을 정수로 반환하는 함수
+
+normalized : 방향 값이 1로 보정된 벡터
+
+
+
+Freeze Rotation에서 X, Z 고정
+
+transform 이동은 물리 충돌을 무시하는 경우가 발생함
+
+Collision Detection을 Continuous로 변경해준다.
+
+
+
+애니메이션 부터 보기
