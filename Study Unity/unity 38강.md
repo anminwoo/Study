@@ -75,3 +75,20 @@ Collision Detection을 Continuous로 변경해준다.
 
 
 애니메이션 부터 보기
+
+플레이어를 누르고  Mash Object에 Animator를 플레이어 자식 오브젝트에 투입시킨다.
+
+애니메이터에 들어가서 Entry -> Idle -> Walk -> Run -> Idle 연결해주기
+
+애니메이션 상태 사이를 Transition으로 연결해준다. 
+
+bool 타입 파라메터(매개변수) 추가
+
+파라메터를 Condition에 사용해서 Transition 완성하기
+
+Transition Duration를 조절한다. (Idle과 Run 사이를 1로해준다.)
+
+Idle <- Run에서는 IsRun을 false로 해준다.
+
+24분 이후 부터
+
