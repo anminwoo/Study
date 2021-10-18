@@ -40,8 +40,16 @@ public class Player : MonoBehaviour
     public float speed;
     float hAxis;
     float vAxis;
+    bool wDown;
     
     Vector3 moveVec;
+    
+    Animator anim;
+    
+    void Awake()
+    {
+        anim = GetComponentInChildren<Animator>();
+    }
     
     void Start()
     {
@@ -52,10 +60,16 @@ public class Player : MonoBehaviour
     {
         hAxis = Input.GetAxisRaw("Horizontal");
         vAxis = Input.GetAxisRaw("Vertical");
+        wDown = Input.GetButton("Walk");
         
         moveVec = new Vector3(hAxis, 0, vAxis).normalized;
+       	transform.position += moveVec; * speed * (wDown ? 0.3f : 1f) *Time.deltaTime;
         
-        transform.position += moveVec; * speed * Time.deltaTime;
+        anim.SetBool("isRun", moveVec != Vector3.zero);
+        anim.SetBool("isWalk", wDown);
+        
+        
+        transform.LookAt(transform.position + moveVec);
     }
 }
 ```
@@ -63,6 +77,8 @@ public class Player : MonoBehaviour
 GetAxisRaw() : Axis 값을 정수로 반환하는 함수
 
 normalized : 방향 값이 1로 보정된 벡터
+
+LookAt() : 지정된 벡터를 향해서 회전시켜주는 함수
 
 
 
@@ -90,5 +106,62 @@ Transition Duration를 조절한다. (Idle과 Run 사이를 1로해준다.)
 
 Idle <- Run에서는 IsRun을 false로 해준다.
 
-24분 이후 부터
+Run -> Walk 에서 Has Exit Time 체크해제 ,Transition Duration 0.1
 
+Walk -> Run 에서 IsWalk : false 나머지는 위와 동일
+
+Walk -> Idle IsRun : false 나머지는 동일
+
+Idle -> Walk IsWalk, IsRun 둘다  true 나머지는 동일
+
+
+
+프로젝트 매니저로 들어가 Input Manager에서 새로운 Input을 위해 Size 늘리기 18 -> 19
+
+Name : Walk
+
+Positive Button : left shift
+
+Alt Positive Button은 지우기
+
+
+
+쿼터뷰 느낌이 나도록 카메라 위치, 회전 변경
+
+| Position | X: 0  | Y: 21 | Z: -11 |
+| -------- | ----- | ----- | ------ |
+| Rotation | X: 60 | Y: 0  | Z: 0   |
+| Scale    | X: 1  | Y: 1  | Z: 1   |
+
+
+
+### 카메라 스크립트
+
+follower 스크립트 만들기
+
+메인카메라에 넣기
+
+```c#
+public class Follow : MonoBehaviour
+{
+    public Transform target;
+    public Vector3 offset;
+    
+    void Update()
+    {
+        transform.position = target.position + offset;
+    }
+}
+```
+
+target에다가 플레이어 끌어다가 넣기
+
+Offset에다가**Position** 적어주기
+
+빈오브젝트 만들고 WorldSpace 만들고 지형 오브젝트를 모두 넣은 다음 45도 회전시킨다.
+
+애니메이션 속도를 알맞게 변경해준다.
+
+카메라가 보고있는 방향쪽 벽이 보이고 아닌쪽은 Mash Renderer로 안보이게 설정해준다.
+
+카메라 오프셋 값을 조절하여 원하는 뷰를 찾는다.
