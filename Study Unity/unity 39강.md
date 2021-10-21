@@ -127,4 +127,6 @@ rigid.AddForce(Vector3.up * 15, ForceMode.Impulse);
 
 여기서 곱해지는 숫자를 바꾸며 조절해준다.
 
-지형 물리 편집 부터 보기
+WorkSpace를 Static으로 바꿔준다.
+
+Static으로 해놓는 이유: Collision Dection > Continuous는 Static과 충돌할 때 효과적이기 떄문이다.
