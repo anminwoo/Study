@@ -213,6 +213,7 @@ public class Player : MonoBehaviour
                         health = maxHealth;
                     break;
                 case Item.Type.Grenade:
+                    grenades[hasGrenades].SetActive(true);
                     hasGrenades += item.value;
                     if(hasGrenades > maxHasGrenades)
                         hasGrenades = maxHasGrenades;
@@ -275,7 +276,50 @@ Rate of Distance : 파티클의 위치 변화에 따라 입자 생성
 
 
 
-공전 구현 부터 보기
+2Scripts에 Orbit 스크립트 만들기
+
+4방향(Front, Back, Right, Left)에 스크립트 추가
+
+### 공전 구현
+
+```c#
+public class Orbit : MonoBehaviour
+{
+    public Transform target;
+    public float orbitSpeed;
+    Vector3 offset;
+    
+    void Start()
+    {
+        offSet = transform.position - target.position;
+    }
+    
+    void Update()
+    {
+        transform.position = target.position + offSet;
+        trasform.RotateAround(target.position,
+                             Vector3.up,
+                             orbitSpeed * Time.deltaTime);
+        offSet = transform.position - target.position;
+    }
+}
+```
+
+RotateAround() : 타겟 주위를 회전하는 함수
+
+Target : Player
+
+Orbit Speed : 15
+
+RotateAround()는 목표가 움직이면 일그러지는 단점이 있다.
+
+그래서 offSet를 사용해서 계속 플레이어와 함께 하도록 해준다.
+
+파티클이 플레이어를 따라다니는 파티클 효과가 나오는 건 Particle System -> Simulation Space : World, Emission : Rate over Distance일 때 나온다.
 
 
+
+Player Inspector를 잠금하고 각 수류탄들을 모두 선택한 후 플레이어 수류탄 배열 변수에 할당시켜준다.
+
+각 수류탄을 인스펙터 창에서 비활성화 시켜준다.
 
