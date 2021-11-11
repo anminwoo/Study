@@ -16,6 +16,27 @@ public class Weapon : MnonBehaviour
     public BoxCollider meleeArea;
     public TrailRenderer trailEffect;
     
+    public void Use()
+    {
+        if(type == Type.Melee)
+        {
+            StopCoroutine("Swing");
+            StartCoroutine("Swing");
+        }
+    }
+    
+    IEnumerator Swing()
+    {
+        yield return new WaitForSeconds(0.1f);
+        meleeArea.enabled = true;
+        trailEffect.enabled = true;
+        
+        yield return new WaitForSeconds(0.3f);
+        meleeArea.enabled = false;
+        
+        yield return new WaitForSeconds(0.3f);
+        trailEffect.enabled = false;
+    }
     
 }
 ```
@@ -62,4 +83,27 @@ Trail Renderer와 BoxCollider를 비활성화 시켜놓는다.
 
 
 
-공격 로직 부터 듣기
+
+#### 일반함수와 코루틴의 차이
+
+일반함수 : 메인루틴 -> 서브루틴 -> 메인루틴 (교차 실행)
+
+코루틴 함수 : 메인루틴 + 코루틴 (동시 실행)
+
+IEnumerator : 열거형 함수 클래스
+
+yield : 결과를 전달하는 키워드
+
+yield 키워드를 여러 개 사용하여 시간차 로직을 만들수 있다.
+
+WaitForSeconds() : 주어진 수치만큼 기다리는 함수
+
+yield break로 코루틴 탈출 가능
+
+StartCoroutine() : 코루틴 실행 함수
+
+StopCoroutine() : 코루틴 정지 함수
+
+
+
+공격 실행부터 듣기
