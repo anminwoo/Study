@@ -100,6 +100,7 @@ public class Player : MonoBehaviour
     bool wDown;
     bool jDown;
     bool fDown;
+    bool rDown;
     bool iDown;
     bool sDown1;
     bool sDown2;
@@ -108,6 +109,7 @@ public class Player : MonoBehaviour
     bool isJump;
     bool isDodge;
     bool isSwap;
+    bool isReload;
     bool isFireReady = true;
     
     Vector3 moveVec
@@ -139,6 +141,7 @@ public class Player : MonoBehaviour
         Turn();
         Jump();
         Attack();
+        Reload();
         Dodge();
         Swap();
         Interation();
@@ -151,6 +154,7 @@ public class Player : MonoBehaviour
         wDown = Input.GetButton("Walk");
         jDown = Input.GetButtonDown("Jump");
         fDown = Input.GetButton("Fire1");
+        rDown = Input.GetButtonDown("Reload");
         iDown = Input.GetButtonDown("Interation");
         sDown1 = Input.GetButtonDown("Swap1");
         sDown2 = Input.GetButtonDown("Swap2");
@@ -164,7 +168,7 @@ public class Player : MonoBehaviour
         if(isDodge)
             moveVec = dodgeVec; // 회피 중에는 움직임 벡터 -> 회피방향 벡터로 바뀌게함
         
-        if(isSwap || !isFireReady)
+        if(isSwap || isReload || !isFireReady)
             moveVec = Vector3.zero;
         
        	transform.position += moveVec; * speed * (wDown ? 0.3f : 1f) *Time.deltaTime;
@@ -203,6 +207,33 @@ public class Player : MonoBehaviour
         	anim.SetTrigger(equipWeapon.type == Weapon.Type.Melee ? "doSwing" : "doShot");
         	fireDelay = 0;
         }
+    }
+    
+    void  Reload()
+    {
+        if(equipWeapon == null) // 장착한 무기가 없다면 return;
+            retrun;
+        
+        if(equipWeapon.type == Weapon.Type.Melee) // 장착한 무기가 근접 무기 라면 return;
+            return;
+        if(ammo == 0)
+            return;
+        
+        if(rDown && !isJump && !isDodge && !isSwap && !isFireReady)
+        {
+            anim.SetTrigger("doReload");
+            isReload = true;
+            
+            Invoke("ReloadOut", 3f); // 장전 시간은 자신이 원하는대로
+        }
+    }
+    
+    void ReloadOut()
+    {
+        int reAmmo = ammo < equipWeapon.maxAmmo ? ammo : equipWeapon.maxAmmo; // 가지고 있는 총알이 장착한 무기의 탄창 수 보다 적다면 가지고 있는 총알 만큼만 채워줌
+        equipWeapon.curAmmo = reAmmo;
+        ammo -= reAmmo;
+        isReload = false;
     }
     
     void Dodge()
@@ -346,6 +377,9 @@ public class Weapon : MnonBehaviour
     public Type type;
     public int damage;
     public float rate;
+    public int maxAmmo; // 전체 탄약
+    public int curAmmo; // 현재 탄약
+    
     public BoxCollider meleeArea;
     public TrailRenderer trailEffect;
     public Transform bulletPos;
@@ -361,8 +395,9 @@ public class Weapon : MnonBehaviour
             StopCoroutine("Swing");
             StartCoroutine("Swing");
         }
-        else if(type == Type.Melee)
+        else if(type == Type.Range && curAmmo > 0)
         {
+            curAmmo--;
             StopCoroutine("Shot");
         }
     }
@@ -410,4 +445,22 @@ Global을 Local로 변경
 
 Add Tag에서 Wall을 만들어준다.벽에 태크 달아주기
 
-재장전 구현하기 부터 듣기
+
+
+Input Manager 
+
+Size 24로 늘려줌 (Reload 만들어주기), Positive Button: r로 설정
+
+
+
+Reload 애니메이션 연결해주기 Any Time -> Reload -> Exit
+
+New Trigger (doReload) 추가 
+
+Any Time -> Reload에 Conditions에 doReload 넣어주기 Transition Duration: 0
+
+Reload -> Exit: Has Exit Time에 체크 Transition Duration: 0.1로 해줌
+
+무기의 전체 탄약과 현재 탄약 수치를 정해준다.
+
+마우스 회전부터 보기
