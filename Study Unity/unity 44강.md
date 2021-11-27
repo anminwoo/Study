@@ -88,6 +88,7 @@ public class Player : MonoBehaviour
     public int coin;
     public int health;
     public int hasGrenades;
+    public Camera followCamera;
     
     public int maxAmmo;
     public int maxCoin;
@@ -179,7 +180,21 @@ public class Player : MonoBehaviour
     
     void Turn()
     {
+        // 1. 키보드에 의한 회전
         transform.LookAt(transform.position + moveVec);
+        
+        // 2. 마우스에 의한 회전
+        if(fDown)
+        {
+            Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);
+      	    RaycastHit rayHit;
+        	if(Physics.Raycast(ray, out rayHit, 100))
+        	{
+            	Vector3 nextVec = rayHit.point - transform.position;
+                nextVec.y = 0;
+           		transform.LookAt(transform.position + nextVec);
+        	}
+        }
     }
     
     void Jump()
@@ -366,6 +381,10 @@ public class Player : MonoBehaviour
 
 권총과 기관총의 타입을 Range로 변경 권총: Rate(발사속도) 0.7, 서브 머신건 0.15
 
+ScreenPointToRay(): 스크린에서 월드로 Ray를 쏘는 함수
+
+out: return 처럼 반환값을 주어진 변수에 저장하는 키워드
+
 
 
 #### 무기 스크립트
@@ -463,4 +482,3 @@ Reload -> Exit: Has Exit Time에 체크 Transition Duration: 0.1로 해줌
 
 무기의 전체 탄약과 현재 탄약 수치를 정해준다.
 
-마우스 회전부터 보기
